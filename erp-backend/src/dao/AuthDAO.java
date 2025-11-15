@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import db.DatabaseConnection;
+import model.AuthUser;
 
 public class AuthDAO {
     private Connection conn;
@@ -13,19 +14,31 @@ public class AuthDAO {
         this.conn = DatabaseConnection.getAuthConnection();
     }
 
-    public ResultSet getUserByUsername(String username) throws SQLException {
+    public AuthUser getUserByUsername(String username) throws SQLException {
         String query = "SELECT user_id, username, role, password_hash, status, last_login FROM users_auth WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
-        return ps.executeQuery();
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            AuthUser user = new AuthUser();
+            user.setUserId(rs.getInt("user_id"));
+            user.setUsername(rs.getString("username"));
+            user.setRole(rs.getString("role"));
+            user.setPasswordHash(rs.getString("password_hash"));
+            user.setStatus(rs.getString("status"));
+            user.setLastLogin(rs.getTimestamp("last_login").toLocalDateTime());
+            return user;
+        }
+        return null;
     }
 
-    public boolean createUser(String username, String role, String passwordHash) throws SQLException {
-        String query = "INSERT INTO users_auth(username, role, password_hash, status) VALUES (?, ?, ?, 'active')";
+    public boolean createUser(AuthUser user) throws SQLException {
+        String query = "INSERT INTO users_auth(username, role, password_hash, status) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1, username);
-        ps.setString(2, role);
-        ps.setString(3, passwordHash);
+        ps.setString(1, user.getUsername());
+        ps.setString(2, user.getRole());
+        ps.setString(3, user.getPasswordHash());
+        ps.setString(4, user.getStatus());
         int rows = ps.executeUpdate();
         return rows > 0;
     }
