@@ -19,7 +19,7 @@ CREATE TABLE students (
 CREATE TABLE instructors (
     user_id int PRIMARY KEY,
     department varchar(100) NOT NULL,
-    FOREIGN KEY (`user_id`) REFERENCES `auth_db`.`users_auth` (`user_id`)
+    FOREIGN KEY (user_id) REFERENCES auth_db.users_auth(user_id)
 );
 
 CREATE TABLE sections (
@@ -51,7 +51,7 @@ CREATE TABLE grades (
     component varchar(30) NOT NULL,
     score decimal(5,2) CHECK ((`score` >= 0)) ,
     final_grade char(2),
-    FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`enrollment_id`)
+    FOREIGN KEY (enrollment_id) REFERENCES enrollments(enrollment_id)
 );
 
 CREATE TABLE settings (
