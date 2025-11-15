@@ -49,7 +49,7 @@ CREATE TABLE grades (
     grade_id int AUTO_INCREMENT PRIMARY KEY,
     enrollment_id int NOT NULL,
     component varchar(30) NOT NULL,
-    score decimal(5,2) CHECK ((`score` >= 0)) ,
+    score decimal(5,2) CHECK ((score >= 0)) ,
     final_grade char(2),
     FOREIGN KEY (enrollment_id) REFERENCES enrollments(enrollment_id)
 );
