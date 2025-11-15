@@ -8,7 +8,7 @@ CREATE TABLE users_auth (
     role enum('student','instructor','admin') NOT NULL,
     password_hash varchar(255) NOT NULL,
     status enum('active','inactive') DEFAULT 'active',
-    last_login datetime DEFAULT NULL,
+    last_login datetime DEFAULT NULL
 );
 
 CREATE TABLE password_history (
