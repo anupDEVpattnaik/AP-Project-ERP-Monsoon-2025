@@ -9,7 +9,7 @@ CREATE TABLE users_auth (
     password_hash varchar(255) NOT NULL,
     status enum('active','inactive') DEFAULT 'active',
     last_login datetime DEFAULT NULL,
-)
+);
 
 CREATE TABLE password_history (
     log_id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
