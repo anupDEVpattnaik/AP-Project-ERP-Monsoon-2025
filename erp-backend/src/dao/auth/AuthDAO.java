@@ -37,4 +37,13 @@ public class AuthDAO {
         int rows = ps.executeUpdate();
         return rows > 0;
     }
+
+    public boolean updatePasswordHash(int userId, String newPasswordHash) throws SQLException {
+        String query = "UPDATE users_auth SET password_hash = ? WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, newPasswordHash);
+        ps.setInt(2, userId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    }
 }
