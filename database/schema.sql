@@ -57,5 +57,4 @@ CREATE TABLE grades (
 CREATE TABLE settings (
     setting_key varchar(50) PRIMARY KEY,
     setting_value varchar(50) NOT NULL
-    maintenance_mode enum('on','off') DEFAULT 'off'
 );
