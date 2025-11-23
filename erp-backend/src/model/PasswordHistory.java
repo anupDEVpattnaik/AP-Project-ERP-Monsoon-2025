@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalDateTime;
+
 public class PasswordHistory {
     private int log_id;
     private int user_id;
