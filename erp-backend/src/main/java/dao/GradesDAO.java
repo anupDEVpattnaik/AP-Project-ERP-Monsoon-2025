@@ -87,4 +87,26 @@ public class GradesDAO {
         ps.setInt(1, enrollmentId);
         ps.executeUpdate();
     }
+
+    public List<Grade> getGradesByStudent(int studentUserId) {
+        String query = "SELECT * FROM grades WHERE enrollment_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, enrollmentId);
+
+        ResultSet rs = ps.executeQuery();
+        List<Grade> list = new ArrayList<>();
+
+        while (rs.next()) {
+            Grade g = new Grade();
+            g.setgrade_id(rs.getInt("grade_id"));
+            g.setEnrollment_id(rs.getInt("enrollment_id"));
+            g.setComponent(rs.getString("component"));
+            g.setScore(rs.getFloat("score"));
+            g.setFinal_grade(rs.getString("final_grade"));
+
+            list.add(g);
+        }
+
+        return list;
+    }
 }
