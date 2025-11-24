@@ -1,6 +1,9 @@
 package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,17 +15,17 @@ public class GradesDAO {
     private Connection conn;
 
     public GradesDAO() throws SQLException {
-        this.conn = DatabaseConnection.getErpConnection();
+        this.conn = DatabaseConnection.getERPConnection();
     }
 
     public void addGrade(Grade grade) throws SQLException {
         String query = "INSERT INTO grades (enrollment_id, component, score, final_grade) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(query);
 
-        ps.setInt(1, grade.getEnrollmentId());
+        ps.setInt(1, grade.getEnrollment_id());
         ps.setString(2, grade.getComponent());
-        ps.setBigDecimal(3, grade.getScore());
-        ps.setString(4, grade.getFinalGrade());
+        ps.setFloat(3, grade.getScore());
+        ps.setString(4, grade.getFinal_grade());
 
         ps.executeUpdate();
     }
@@ -37,11 +40,11 @@ public class GradesDAO {
 
         while (rs.next()) {
             Grade g = new Grade();
-            g.setGradeId(rs.getInt("grade_id"));
-            g.setEnrollmentId(rs.getInt("enrollment_id"));
+            g.setgrade_id(rs.getInt("grade_id"));
+            g.setEnrollment_id(rs.getInt("enrollment_id"));
             g.setComponent(rs.getString("component"));
-            g.setScore(rs.getBigDecimal("score"));
-            g.setFinalGrade(rs.getString("final_grade"));
+            g.setScore(rs.getFloat("score"));
+            g.setFinal_grade(rs.getString("final_grade"));
 
             list.add(g);
         }

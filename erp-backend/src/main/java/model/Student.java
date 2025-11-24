@@ -4,6 +4,7 @@ public class Student {
     private int user_id;
     private String roll_no;
     private String program;
+    private int year;
 
     public int getUser_id() {return user_id;}
     public void setUser_id(int user_id) {this.user_id = user_id;}
@@ -13,4 +14,7 @@ public class Student {
 
     public String getProgram() {return program;}
     public void setProgram(String program) {this.program = program;}
+
+    public int getYear() {return year;}
+    public void setYear(int year) {this.year = year;}
 }

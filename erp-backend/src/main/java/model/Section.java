@@ -8,6 +8,7 @@ public class Section {
     private String room;
     private int capacity;
     private String semester;
+    private int year;
 
     public int getsection_id() {return section_id;}
     public void setsection_id(int section_id) {this.section_id = section_id;}
@@ -29,4 +30,7 @@ public class Section {
 
     public String getsemester() {return semester;}
     public void setsemester(String semester) {this.semester = semester;}
+
+    public int getYear() {return year;}
+    public void setYear(int year) {this.year = year;}
 }

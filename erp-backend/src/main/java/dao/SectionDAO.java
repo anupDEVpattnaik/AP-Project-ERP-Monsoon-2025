@@ -1,12 +1,14 @@
 package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.html.HTMLDocument;
-
 import db.DatabaseConnection;
+import model.Section;
 
 public class SectionDAO {
     private Connection conn;
@@ -19,12 +21,12 @@ public class SectionDAO {
         String query = "INSERT INTO sections(course_id, instructor_id, day_time, room, capacity, semester, year) " +
                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1, section.getCourseId());
-        ps.setInt(2, section.getInstructorId());
-        ps.setString(3, section.getDayTime());
-        ps.setString(4, section.getRoom());
-        ps.setInt(5, section.getCapacity());
-        ps.setString(6, section.getSemester());
+        ps.setString(1, section.getcourse_id());
+        ps.setInt(2, section.getinstructor_id());
+        ps.setString(3, section.getday_time());
+        ps.setString(4, section.getroom());
+        ps.setInt(5, section.getcapacity());
+        ps.setString(6, section.getsemester());
         ps.setInt(7, section.getYear());
         int rows = ps.executeUpdate();
         return rows > 0;
@@ -37,13 +39,13 @@ public class SectionDAO {
         List<Section> sections = new ArrayList<>();
         while (rs.next()) {
             Section s = new Section();
-            s.setSectionId(rs.getInt("section_id"));
-            s.setCourseId(rs.getString("course_id"));
-            s.setInstructorId(rs.getInt("instructor_id"));
-            s.setDayTime(rs.getString("day_time"));
-            s.setRoom(rs.getString("room"));
-            s.setCapacity(rs.getInt("capacity"));
-            s.setSemester(rs.getString("semester"));
+            s.setsection_id(rs.getInt("section_id"));
+            s.setcourse_id(rs.getString("course_id"));
+            s.setInstructor_id(rs.getInt("instructor_id"));
+            s.setday_time(rs.getString("day_time"));
+            s.setroom(rs.getString("room"));
+            s.setcapacity(rs.getInt("capacity"));
+            s.setsemester(rs.getString("semester"));
             s.setYear(rs.getInt("year"));
             sections.add(s);
         }
@@ -53,14 +55,14 @@ public class SectionDAO {
     public boolean updateSection(Section section) throws SQLException {
         String query = "UPDATE sections SET course_id = ?, instructor_id = ?, day_time = ?, room = ?, capacity = ?, semester = ?, year = ? WHERE section_id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setString(1, section.getCourseId());
-        ps.setInt(2, section.getInstructorId());
-        ps.setString(3, section.getDayTime());
-        ps.setString(4, section.getRoom());
-        ps.setInt(5, section.getCapacity());
-        ps.setString(6, section.getSemester());
+        ps.setString(1, section.getcourse_id());
+        ps.setInt(2, section.getinstructor_id());
+        ps.setString(3, section.getday_time());
+        ps.setString(4, section.getroom());
+        ps.setInt(5, section.getcapacity());
+        ps.setString(6, section.getsemester());
         ps.setInt(7, section.getYear());
-        ps.setInt(8, section.getSectionId());
+        ps.setInt(8, section.getsection_id());
         int rows = ps.executeUpdate();
         return rows > 0;
     }

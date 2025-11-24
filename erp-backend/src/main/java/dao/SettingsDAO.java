@@ -1,6 +1,9 @@
-package src.dao;
+package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import db.DatabaseConnection;
 
@@ -9,7 +12,7 @@ public class SettingsDAO {
     private Connection conn;
 
     public SettingsDAO() throws SQLException {
-        this.conn = DatabaseConnection.getErpConnection();
+        this.conn = DatabaseConnection.getERPConnection();
     }
 
     public String getSetting(String key) throws SQLException {

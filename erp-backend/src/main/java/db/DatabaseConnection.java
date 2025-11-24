@@ -9,7 +9,7 @@ public class DatabaseConnection {
     private static final String PASS = "sqlisshit";
 
     // Connection to ERP database
-    public static Connection getErpConnection() throws SQLException {
+    public static Connection getERPConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/erp_db";
         return DriverManager.getConnection(url, USER, PASS);
     }

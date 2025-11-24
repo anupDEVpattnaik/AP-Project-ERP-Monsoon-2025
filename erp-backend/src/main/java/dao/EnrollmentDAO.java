@@ -1,11 +1,14 @@
 package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Enrollment;
 import db.DatabaseConnection;
+import model.Enrollment;
 
 public class EnrollmentDAO {
     private Connection conn;
@@ -17,8 +20,8 @@ public class EnrollmentDAO {
     public boolean addEnrollment(Enrollment enrollment) throws SQLException {
         String checkQuery = "SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ? AND section_id = ?";
         PreparedStatement checkPs = conn.prepareStatement(checkQuery);
-        checkPs.setInt(1, enrollment.getStudentId());
-        checkPs.setInt(2, enrollment.getSectionId());
+        checkPs.setInt(1, enrollment.getStudent_id());
+        checkPs.setInt(2, enrollment.getSection_id());
         ResultSet rs = checkPs.executeQuery();
         if (rs.next() && rs.getInt("count") > 0) {
             return false;
@@ -26,8 +29,8 @@ public class EnrollmentDAO {
 
         String query = "INSERT INTO enrollments(student_id, section_id, status) VALUES (?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, enrollment.getStudentId());
-        ps.setInt(2, enrollment.getSectionId());
+        ps.setInt(1, enrollment.getStudent_id());
+        ps.setInt(2, enrollment.getSection_id());
         ps.setString(3, enrollment.getStatus());
         int rows = ps.executeUpdate();
         return rows > 0;
@@ -41,9 +44,9 @@ public class EnrollmentDAO {
         List<Enrollment> list = new ArrayList<>();
         while (rs.next()) {
             Enrollment e = new Enrollment();
-            e.setEnrollmentId(rs.getInt("enrollment_id"));
-            e.setStudentId(rs.getInt("student_id"));
-            e.setSectionId(rs.getInt("section_id"));
+            e.setEnrollment_id(rs.getInt("enrollment_id"));
+            e.setStudent_id(rs.getInt("student_id"));
+            e.setSection_id(rs.getInt("section_id"));
             e.setStatus(rs.getString("status"));
             list.add(e);
         }
