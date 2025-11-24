@@ -88,25 +88,32 @@ public class GradesDAO {
         ps.executeUpdate();
     }
 
-    public List<Grade> getGradesByStudent(int studentUserId) {
-        String query = "SELECT * FROM grades WHERE enrollment_id = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, enrollmentId);
-
-        ResultSet rs = ps.executeQuery();
+    public List<Grade> getGradesByStudent(int studentUserId) throws SQLException {
+        String sql = "SELECT enrollment_id FROM enrollments WHERE student_id = ? AND status = 'enrolled'";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, studentUserId);
+        ResultSet res = stmt.executeQuery();
         List<Grade> list = new ArrayList<>();
 
-        while (rs.next()) {
-            Grade g = new Grade();
-            g.setgrade_id(rs.getInt("grade_id"));
-            g.setEnrollment_id(rs.getInt("enrollment_id"));
-            g.setComponent(rs.getString("component"));
-            g.setScore(rs.getFloat("score"));
-            g.setFinal_grade(rs.getString("final_grade"));
+        while (res.next()) {
+            int enrollmentId = res.getInt("enrollment_id");
+            String query = "SELECT * FROM grades WHERE enrollment_id = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, enrollmentId);
 
-            list.add(g);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Grade g = new Grade();
+                g.setgrade_id(rs.getInt("grade_id"));
+                g.setEnrollment_id(rs.getInt("enrollment_id"));
+                g.setComponent(rs.getString("component"));
+                g.setScore(rs.getFloat("score"));
+                g.setFinal_grade(rs.getString("final_grade"));
+
+                list.add(g);
+            }
         }
-
         return list;
     }
 }
