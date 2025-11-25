@@ -147,6 +147,7 @@ public class StudentService {
         sb.append("Component,Score,Final\n");
 
         for (Grade g : grades) {
+            sb.append(g.getEnrollment_id()).append(':');
             sb.append(g.getComponent()).append(",");
             sb.append(g.getScore()).append(",");
             sb.append(g.getFinal_grade()).append("\n");
