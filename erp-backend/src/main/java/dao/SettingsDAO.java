@@ -17,10 +17,10 @@ public class SettingsDAO {
 
     public String getSetting(String key) throws SQLException {
         String sql = "SELECT setting_value FROM settings WHERE setting_key = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, key);
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, key);
 
-        ResultSet rs = ps.executeQuery();
+        ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
             return rs.getString("setting_value");
         }
@@ -29,12 +29,12 @@ public class SettingsDAO {
 
     public void updateSetting(String key, String value) throws SQLException {
         String sql = "UPDATE settings SET setting_value = ? WHERE setting_key = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
+        PreparedStatement stmt = conn.prepareStatement(sql);
 
-        ps.setString(1, value);
-        ps.setString(2, key);
+        stmt.setString(1, value);
+        stmt.setString(2, key);
 
-        ps.executeUpdate();
+        stmt.executeUpdate();
     }
 
     public void enableMaintenance() throws SQLException {

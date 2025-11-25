@@ -87,6 +87,7 @@ public class GradesDAO {
         ps.setInt(1, enrollmentId);
         ps.executeUpdate();
     }
+<<<<<<< HEAD
 
     public List<Grade> getGradesByStudent(int studentUserId) throws SQLException {
         String sql = "SELECT enrollment_id FROM enrollments WHERE student_id = ? AND status = 'enrolled'";
@@ -116,4 +117,6 @@ public class GradesDAO {
         }
         return list;
     }
+=======
+>>>>>>> 3522da48002220d72b60bce2b83fec538245ff8d
 }

@@ -18,7 +18,6 @@ public class Enrollment {
     public String getStatus() {return status;}
     public void setStatus(String status) {this.status = status;}
 
-    @Override
     public String toString(){
         return "Enrollment{ Enrollment ID= " + enrollment_id
                 + ", Student ID= " + student_id

@@ -74,23 +74,4 @@ public class SectionDAO {
         int rows = ps.executeUpdate();
         return rows > 0;
     }
-
-    public Section getSectionById(int section_id) throws SQLException {
-        String query = "SELECT section_id, course_id, instructor_id, day_time, room, capacity, semester, year FROM sections WHERE section_id = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            Section s = new Section();
-            s.setsection_id(rs.getInt("section_id"));
-            s.setcourse_id(rs.getString("course_id"));
-            s.setInstructor_id(rs.getInt("instructor_id"));
-            s.setday_time(rs.getString("day_time"));
-            s.setroom(rs.getString("room"));
-            s.setcapacity(rs.getInt("capacity"));
-            s.setsemester(rs.getString("semester"));
-            s.setYear(rs.getInt("year"));
-            return s;
-        }
-        return null;
-    }
 }
