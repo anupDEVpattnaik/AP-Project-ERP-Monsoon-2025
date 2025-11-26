@@ -6,6 +6,8 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.sql.SQLException;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,18 +16,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import dao.CourseDAO;
 import model.AuthUser;
+import model.Course;
 import service.AdminService;
+import service.SettingsService;
 
 public class AdminDashboard extends JFrame {
    private AuthUser currentUser;
    private AdminService adminService;
+   private CourseDAO courseDAO;
+   private SettingsService settingsService;
 
    public AdminDashboard(AuthUser var1) {
       this.currentUser = var1;
 
       try {
          this.adminService = new AdminService();
+         this.courseDAO = new CourseDAO();
+         this.settingsService = new SettingsService();
       } catch (SQLException var3) {
          JOptionPane.showMessageDialog(this, "Error initializing admin service: " + var3.getMessage());
          return;
@@ -49,28 +59,43 @@ public class AdminDashboard extends JFrame {
       });
       var2.add(var3);
       var1.add(var2, "North");
-      JPanel var4 = new JPanel(new GridLayout(4, 1, 10, 10));
+      JPanel var4 = new JPanel(new GridLayout(7, 1, 10, 10));
       var4.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-      JButton var5 = new JButton("Create User");
+      JButton var5 = new JButton("Create Auth User");
       var5.addActionListener((var1x) -> {
          this.openCreateUserDialog();
       });
-      JButton var6 = new JButton("Create Course");
+      JButton var6 = new JButton("Create Student ERP Profile");
       var6.addActionListener((var1x) -> {
+         this.openCreateStudentProfileDialog();
+      });
+      JButton var7 = new JButton("Create Instructor ERP Profile");
+      var7.addActionListener((var1x) -> {
+         this.openCreateInstructorProfileDialog();
+      });
+      JButton var8 = new JButton("Create Course");
+      var8.addActionListener((var1x) -> {
          this.openCreateCourseDialog();
       });
-      JButton var7 = new JButton("Create Section");
-      var7.addActionListener((var1x) -> {
+      JButton var9 = new JButton("Create Section");
+      var9.addActionListener((var1x) -> {
          this.openCreateSectionDialog();
       });
-      JButton var8 = new JButton("Toggle Maintenance Mode");
-      var8.addActionListener((var1x) -> {
-         this.toggleMaintenance();
+      JButton var10 = new JButton("List Courses");
+      var10.addActionListener((var1x) -> {
+         this.listCourses();
+      });
+      JButton var11 = new JButton("Maintenance Menu");
+      var11.addActionListener((var1x) -> {
+         this.openMaintenanceMenu();
       });
       var4.add(var5);
       var4.add(var6);
       var4.add(var7);
       var4.add(var8);
+      var4.add(var9);
+      var4.add(var10);
+      var4.add(var11);
       var1.add(var4, "Center");
    }
 
@@ -169,6 +194,88 @@ public class AdminDashboard extends JFrame {
          JOptionPane.showMessageDialog(this, "Error toggling maintenance: " + var2.getMessage());
       }
 
+   }
+
+   private void openCreateStudentProfileDialog() {
+      JTextField var1 = new JTextField();
+      JTextField var2 = new JTextField();
+      JTextField var3 = new JTextField();
+      JTextField var4 = new JTextField();
+      Object[] var5 = new Object[]{"User ID:", var1, "Roll No.:", var2, "Program:", var3, "Year:", var4};
+      int var6 = JOptionPane.showConfirmDialog(this, var5, "Create Student Profile", 2);
+      if (var6 == 0) {
+         try {
+            int var7 = Integer.parseInt(var1.getText());
+            String var8 = var2.getText();
+            String var9 = var3.getText();
+            int var10 = Integer.parseInt(var4.getText());
+            boolean var11 = this.adminService.createStudentProfile(var7, var8, var9, var10);
+            if (var11) {
+               JOptionPane.showMessageDialog(this, "Student profile created successfully!");
+            } else {
+               JOptionPane.showMessageDialog(this, "Failed to create student profile.");
+            }
+         } catch (NumberFormatException var12) {
+            JOptionPane.showMessageDialog(this, "Invalid user ID.");
+         } catch (SQLException var13) {
+            JOptionPane.showMessageDialog(this, "Error creating student profile: " + var13.getMessage());
+         }
+      }
+   }
+
+   private void openCreateInstructorProfileDialog() {
+      JTextField var1 = new JTextField();
+      JTextField var2 = new JTextField();
+      Object[] var5 = new Object[]{"User ID:", var1, "Department:", var2};
+      int var6 = JOptionPane.showConfirmDialog(this, var5, "Create Instructor Profile", 2);
+      if (var6 == 0) {
+         try {
+            int var7 = Integer.parseInt(var1.getText());
+            String var8 = var2.getText();
+            boolean var11 = this.adminService.createInstructorProfile(var7, var8);
+            if (var11) {
+               JOptionPane.showMessageDialog(this, "Instructor profile created successfully!");
+            } else {
+               JOptionPane.showMessageDialog(this, "Failed to create instructor profile.");
+            }
+         } catch (NumberFormatException var12) {
+            JOptionPane.showMessageDialog(this, "Invalid user ID.");
+         } catch (SQLException var13) {
+            JOptionPane.showMessageDialog(this, "Error creating instructor profile: " + var13.getMessage());
+         }
+      }
+   }
+
+   private void listCourses() {
+      try {
+         List<Course> var1 = this.courseDAO.getAllCourses();
+         StringBuilder var2 = new StringBuilder();
+         for (Course var3 : var1) {
+            var2.append("Code: ").append(var3.getCode()).append(", Title: ").append(var3.getTitle()).append(", Credits: ").append(var3.getCredits()).append("\n");
+         }
+         JOptionPane.showMessageDialog(this, "Courses:\n" + var2.toString());
+      } catch (SQLException var4) {
+         JOptionPane.showMessageDialog(this, "Error listing courses: " + var4.getMessage());
+      }
+   }
+
+   private void openMaintenanceMenu() {
+      Object[] var1 = new Object[]{"Check Maintenance Mode", "Enable Maintenance", "Disable Maintenance"};
+      int var2 = JOptionPane.showOptionDialog(this, "Select maintenance action:", "Maintenance Menu", 0, 3, (javax.swing.Icon)null, var1, var1[0]);
+      try {
+         if (var2 == 0) {
+            String var3 = this.settingsService.getMaintenanceStatus();
+            JOptionPane.showMessageDialog(this, "Maintenance mode is " + var3);
+         } else if (var2 == 1) {
+            this.settingsService.enableMaintenance();
+            JOptionPane.showMessageDialog(this, "Maintenance mode enabled.");
+         } else if (var2 == 2) {
+            this.settingsService.disableMaintenance();
+            JOptionPane.showMessageDialog(this, "Maintenance mode disabled.");
+         }
+      } catch (SQLException var4) {
+         JOptionPane.showMessageDialog(this, "Error: " + var4.getMessage());
+      }
    }
 }
 

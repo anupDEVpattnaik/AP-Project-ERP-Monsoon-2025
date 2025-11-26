@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
 import model.AuthUser;
 import model.Section;
 import service.InstructorService;
@@ -63,19 +65,33 @@ public class InstructorDashboard extends JFrame {
       var5.add(new JScrollPane(var7), "Center");
       var4.addTab("My Sections", var5);
       JPanel var8 = new JPanel(new BorderLayout());
-      JButton var9 = new JButton("Enter Grades");
+      JButton var9 = new JButton("View Enrolled Students");
       var9.addActionListener((var1x) -> {
-         this.openEnterGradesDialog();
+         this.viewEnrolledStudents();
       });
       var8.add(var9, "North");
-      var4.addTab("Enter Grades", var8);
+      var4.addTab("View Enrolled", var8);
       JPanel var10 = new JPanel(new BorderLayout());
-      JButton var11 = new JButton("Export Gradebook");
+      JButton var11 = new JButton("Enter Grades");
       var11.addActionListener((var1x) -> {
-         this.exportGradebook();
+         this.openEnterGradesDialog();
       });
       var10.add(var11, "North");
-      var4.addTab("Export Gradebook", var10);
+      var4.addTab("Enter Grades", var10);
+      JPanel var12 = new JPanel(new BorderLayout());
+      JButton var13 = new JButton("Compute Final Grade");
+      var13.addActionListener((var1x) -> {
+         this.computeFinalGrade();
+      });
+      var12.add(var13, "North");
+      var4.addTab("Compute Final", var12);
+      JPanel var14 = new JPanel(new BorderLayout());
+      JButton var15 = new JButton("Export Gradebook");
+      var15.addActionListener((var1x) -> {
+         this.exportGradebook();
+      });
+      var14.add(var15, "North");
+      var4.addTab("Export Gradebook", var14);
       var1.add(var4, "Center");
    }
 
@@ -146,6 +162,49 @@ public class InstructorDashboard extends JFrame {
          }
       }
 
+   }
+
+   private void viewEnrolledStudents() {
+      String var1 = JOptionPane.showInputDialog(this, "Enter Section ID to view enrolled students:");
+      if (var1 != null) {
+         try {
+            int var2 = Integer.parseInt(var1);
+            List var3 = this.instructorService.getEnrolledStudents(var2, this.currentUser);
+            StringBuilder var4 = new StringBuilder();
+            Iterator var5 = var3.iterator();
+
+            while(var5.hasNext()) {
+               var4.append(var5.next()).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(this, "Enrolled Students:\n" + var4.toString());
+         } catch (NumberFormatException var6) {
+            JOptionPane.showMessageDialog(this, "Invalid section ID.");
+         } catch (SQLException var7) {
+            JOptionPane.showMessageDialog(this, "Error viewing enrolled students: " + var7.getMessage());
+         }
+      }
+   }
+
+   private void computeFinalGrade() {
+      String var1 = JOptionPane.showInputDialog(this, "Enter Section ID to compute final grades:");
+      String var4 = JOptionPane.showInputDialog(this, "Enter Student ID to compute final grades:");
+      if (var1 != null) {
+         try {
+            int var2 = Integer.parseInt(var1);
+            int var5 = Integer.parseInt(var4);
+            boolean var3 = this.instructorService.computeFinalGrade(var2, var5, this.currentUser);
+            if (var3) {
+               JOptionPane.showMessageDialog(this, "Final grades computed successfully!");
+            } else {
+               JOptionPane.showMessageDialog(this, "Failed to compute final grades.");
+            }
+         } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid section ID.");
+         } catch (SQLException e2) {
+            JOptionPane.showMessageDialog(this, "Error computing final grades: " + e2.getMessage());
+         }
+      }
    }
 }
 

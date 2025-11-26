@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+
 import model.AuthUser;
 import model.Course;
 import model.Grade;
@@ -68,8 +70,13 @@ public class StudentDashboard extends JFrame {
       var9.addActionListener((var1x) -> {
          this.openRegisterDialog();
       });
+      JButton var18 = new JButton("Drop Section");
+      var18.addActionListener((var1x) -> {
+         this.openDropDialog();
+      });
       var8.add(var9, "North");
-      var4.addTab("Register", var8);
+      var8.add(var18, "Center");
+      var4.addTab("Register/Drop", var8);
       JPanel var10 = new JPanel(new BorderLayout());
       JButton var11 = new JButton("View My Timetable");
       JTextArea var12 = new JTextArea();
@@ -187,6 +194,25 @@ public class StudentDashboard extends JFrame {
          JOptionPane.showMessageDialog(this, "Error exporting transcript: " + var2.getMessage());
       }
 
+   }
+
+   private void openDropDialog() {
+      String var1 = JOptionPane.showInputDialog(this, "Enter Section ID to drop:");
+      if (var1 != null) {
+         try {
+            int var2 = Integer.parseInt(var1);
+            boolean var3 = this.studentService.dropSection(this.currentUser.getUserId(), var2, this.currentUser);
+            if (var3) {
+               JOptionPane.showMessageDialog(this, "Dropped successfully!");
+            } else {
+               JOptionPane.showMessageDialog(this, "Drop failed.");
+            }
+         } catch (NumberFormatException var4) {
+            JOptionPane.showMessageDialog(this, "Invalid section ID.");
+         } catch (SQLException var5) {
+            JOptionPane.showMessageDialog(this, "Error dropping: " + var5.getMessage());
+         }
+      }
    }
 }
 
