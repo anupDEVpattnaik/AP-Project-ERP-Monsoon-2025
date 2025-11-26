@@ -90,4 +90,3 @@ public class LoginFrame extends JFrame {
       new LoginFrame();
    }
 }
-
