@@ -18,16 +18,27 @@ public class GradesDAO {
         this.conn = DatabaseConnection.getERPConnection();
     }
 
-    public void addGrade(Grade grade) throws SQLException {
+    public boolean addGrade(int enrollmentId, String component, float score, String final_grade) throws SQLException {
+        String sql = "SELECT grade_id FROM grades WHERE enrollmentId = ? AND component = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+
+        stmt.setInt(1, enrollmentId);
+        stmt.setString(2, component);
+
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return updateGrade(rs.getInt("grade_id"), score, final_grade);
+        }
         String query = "INSERT INTO grades (enrollment_id, component, score, final_grade) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(query);
 
-        ps.setInt(1, grade.getEnrollment_id());
-        ps.setString(2, grade.getComponent());
-        ps.setFloat(3, grade.getScore());
-        ps.setString(4, grade.getFinal_grade());
+        ps.setInt(1, enrollmentId);
+        ps.setString(2, component);
+        ps.setFloat(3, score);
+        ps.setString(4, final_grade);
 
         ps.executeUpdate();
+        return true;
     }
 
     public List<Grade> getGradesByEnrollment(int enrollmentId) throws SQLException {
@@ -52,17 +63,18 @@ public class GradesDAO {
         return list;
     }
 
-    public void updateScore(int gradeId, double newScore) throws SQLException {
-        String query = "UPDATE grades SET score = ? WHERE grade_id = ?";
+    public boolean updateGrade(int gradeId, double newScore, String final_grade) throws SQLException {
+        String query = "UPDATE grades SET score = ?, final_grade = ? WHERE grade_id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
 
         ps.setDouble(1, newScore);
         ps.setInt(2, gradeId);
 
         ps.executeUpdate();
+        return true;
     }
 
-    public void updateFinalGrade(int enrollmentId, String finalGrade) throws SQLException {
+    public boolean updateFinalGrade(int enrollmentId, String finalGrade) throws SQLException {
         String query = "UPDATE grades SET final_grade = ? WHERE enrollment_id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
 
@@ -70,6 +82,7 @@ public class GradesDAO {
         ps.setInt(2, enrollmentId);
 
         ps.executeUpdate();
+        return true;
     }
 
     public void deleteGrade(int gradeId) throws SQLException {

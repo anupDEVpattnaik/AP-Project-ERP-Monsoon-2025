@@ -1,6 +1,10 @@
 package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import db.DatabaseConnection;
 import model.AuthUser;
 
@@ -16,6 +20,26 @@ public class AuthDAO {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
         ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            AuthUser user = new AuthUser();
+            user.setUserId(rs.getInt("user_id"));
+            user.setUsername(rs.getString("username"));
+            user.setRole(rs.getString("role"));
+            user.setPasswordHash(rs.getString("password_hash"));
+            user.setStatus(rs.getString("status"));
+            user.setLastLogin(rs.getTimestamp("last_login").toLocalDateTime());
+            return user;
+        }
+        return null;
+    }
+
+    public AuthUser getUserByUserId(int userId) throws SQLException {
+        String query = "SELECT user_id, username, role, password_hash, status, last_login "
+                    + "FROM users_auth WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+
         if (rs.next()) {
             AuthUser user = new AuthUser();
             user.setUserId(rs.getInt("user_id"));

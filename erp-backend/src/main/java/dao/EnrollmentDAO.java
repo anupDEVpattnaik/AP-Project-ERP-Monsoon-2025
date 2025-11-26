@@ -17,21 +17,20 @@ public class EnrollmentDAO {
         this.conn = DatabaseConnection.getERPConnection();
     }
 
-    public boolean addEnrollment(Enrollment enrollment) throws SQLException {
+    public boolean addEnrollment(int studentUserId, int sectionId) throws SQLException {
         String checkQuery = "SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ? AND section_id = ?";
         PreparedStatement checkPs = conn.prepareStatement(checkQuery);
-        checkPs.setInt(1, enrollment.getStudent_id());
-        checkPs.setInt(2, enrollment.getSection_id());
+        checkPs.setInt(1, studentUserId);
+        checkPs.setInt(2, sectionId);
         ResultSet rs = checkPs.executeQuery();
         if (rs.next() && rs.getInt("count") > 0) {
             return false;
         }
 
-        String query = "INSERT INTO enrollments(student_id, section_id, status) VALUES (?, ?, ?)";
+        String query = "INSERT INTO enrollments(student_id, section_id) VALUES (?, ?)";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, enrollment.getStudent_id());
-        ps.setInt(2, enrollment.getSection_id());
-        ps.setString(3, enrollment.getStatus());
+        ps.setInt(1, studentUserId);
+        ps.setInt(2, sectionId);
         int rows = ps.executeUpdate();
         return rows > 0;
     }
@@ -62,11 +61,73 @@ public class EnrollmentDAO {
         return rows > 0;
     }
 
-    public boolean deleteEnrollment(int enrollmentId) throws SQLException {
-        String query = "DELETE FROM enrollments WHERE enrollment_id = ?";
+    public boolean deleteEnrollment(int studentUserId, int sectionId) throws SQLException {
+        String query = "DELETE FROM enrollments WHERE student_id = ? AND section_id = ? LIMIT 1";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, enrollmentId);
+        ps.setInt(1, studentUserId);
+        ps.setInt(2, sectionId);
         int rows = ps.executeUpdate();
         return rows > 0;
+    }
+
+    public boolean dropEnrollment(int studentUserId, int sectionId) throws SQLException {
+        String query = "UPDATE enrollments SET status = 'dropped' WHERE student_id = ? AND section_id = ? LIMIT 1";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, studentUserId);
+        ps.setInt(2, sectionId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    }
+    public boolean isStudentEnrolled(int studentUserId, int sectionId) throws SQLException {
+        String sql = "SELECT 1 FROM enrollments WHERE student_id = ? AND section_id = ? AND status = 'enrolled' LIMIT 1";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, studentUserId);
+        ps.setInt(2, sectionId);
+
+        ResultSet rs = ps.executeQuery();
+        return rs.next(); // returns true if a row exists
+    }
+
+    public int getEnrollmentCount(int section_id) throws SQLException {
+        String query = "SELECT COUNT(*) AS total FROM enrollments WHERE section_id = ? AND status = 'enrolled'";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, section_id);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("total");
+        }
+        return 0;
+    }
+
+    public List<Enrollment> getEnrollmentsBySection(int section_id) throws SQLException {
+        String query = "SELECT * FROM enrollments WHERE section_id = ? AND status = 'enrolled'";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, section_id);
+        ResultSet rs = ps.executeQuery();
+
+        List<Enrollment> list = new ArrayList<>();
+        while (rs.next()) {
+            Enrollment e = new Enrollment();
+            e.setEnrollment_id(rs.getInt("enrollment_id"));
+            e.setStudent_id(rs.getInt("student_id"));
+            e.setSection_id(rs.getInt("section_id"));
+            e.setStatus(rs.getString("status"));
+            list.add(e);
+        }
+        return list;
+    }
+
+    public int getEnrollment_id(int studentUserId, int sectionId) throws SQLException {
+        String sql = "SELECT enrollment_id FROM enrollments WHERE student_id = ? AND section_id = ? LIMIT 1";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, studentUserId);
+        ps.setInt(2, sectionId);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("enrollment_id");
+        }
+        return -1;
     }
 }
