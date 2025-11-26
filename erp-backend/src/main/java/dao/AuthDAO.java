@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import db.DatabaseConnection;
 import model.AuthUser;
@@ -27,7 +28,13 @@ public class AuthDAO {
             user.setRole(rs.getString("role"));
             user.setPasswordHash(rs.getString("password_hash"));
             user.setStatus(rs.getString("status"));
-            user.setLastLogin(rs.getTimestamp("last_login").toLocalDateTime());
+            Timestamp ts = rs.getTimestamp("last_login");
+            if (ts != null) {
+                user.setLastLogin(ts.toLocalDateTime());
+            } else {
+                user.setLastLogin(null);
+            }
+
             return user;
         }
         return null;

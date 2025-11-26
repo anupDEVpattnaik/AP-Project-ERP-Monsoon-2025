@@ -19,7 +19,7 @@ public class GradesDAO {
     }
 
     public boolean addGrade(int enrollmentId, String component, float score, String final_grade) throws SQLException {
-        String sql = "SELECT grade_id FROM grades WHERE enrollmentId = ? AND component = ?";
+        String sql = "SELECT grade_id FROM grades WHERE enrollment_id = ? AND component = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
 
         stmt.setInt(1, enrollmentId);
