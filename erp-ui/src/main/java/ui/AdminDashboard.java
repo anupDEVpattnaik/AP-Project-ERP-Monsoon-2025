@@ -57,7 +57,12 @@ public class AdminDashboard extends JFrame {
       var3.addActionListener((var1x) -> {
          this.logout();
       });
+      JButton changePasswordBtn = new JButton("Change Password");
+      changePasswordBtn.addActionListener((var1x) -> {
+         this.openChangePassword();
+      });
       var2.add(var3);
+      var2.add(changePasswordBtn);
       var1.add(var2, "North");
       JPanel var4 = new JPanel(new GridLayout(7, 1, 10, 10));
       var4.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -89,6 +94,10 @@ public class AdminDashboard extends JFrame {
       var11.addActionListener((var1x) -> {
          this.openMaintenanceMenu();
       });
+      JButton var12 = new JButton("Unlock User");
+      var12.addActionListener((var1x) -> {
+         this.openUnlockUserDialog();
+      });
       var4.add(var5);
       var4.add(var6);
       var4.add(var7);
@@ -96,6 +105,7 @@ public class AdminDashboard extends JFrame {
       var4.add(var9);
       var4.add(var10);
       var4.add(var11);
+      var4.add(var12);
       var1.add(var4, "Center");
    }
 
@@ -276,6 +286,29 @@ public class AdminDashboard extends JFrame {
       } catch (SQLException var4) {
          JOptionPane.showMessageDialog(this, "Error: " + var4.getMessage());
       }
+   }
+
+   private void openUnlockUserDialog() {
+      String var1 = JOptionPane.showInputDialog(this, "Enter User ID to unlock:");
+      if (var1 != null) {
+         try {
+            int var2 = Integer.parseInt(var1);
+            boolean var3 = this.adminService.unlockUser(var2);
+            if (var3) {
+               JOptionPane.showMessageDialog(this, "User unlocked successfully!");
+            } else {
+               JOptionPane.showMessageDialog(this, "Failed to unlock user.");
+            }
+         } catch (NumberFormatException var4) {
+            JOptionPane.showMessageDialog(this, "Invalid user ID.");
+         } catch (SQLException var5) {
+            JOptionPane.showMessageDialog(this, "Error unlocking user: " + var5.getMessage());
+         }
+      }
+   }
+
+   private void openChangePassword() {
+      new ChangePasswordFrame(this.currentUser);
    }
 }
 

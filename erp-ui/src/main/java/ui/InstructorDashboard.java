@@ -51,7 +51,12 @@ public class InstructorDashboard extends JFrame {
       var3.addActionListener((var1x) -> {
          this.logout();
       });
+      JButton changePasswordBtn = new JButton("Change Password");
+      changePasswordBtn.addActionListener((var1x) -> {
+         this.openChangePassword();
+      });
       var2.add(var3);
+      var2.add(changePasswordBtn);
       var1.add(var2, "North");
       JTabbedPane var4 = new JTabbedPane();
       JPanel var5 = new JPanel(new BorderLayout());
@@ -205,6 +210,10 @@ public class InstructorDashboard extends JFrame {
             JOptionPane.showMessageDialog(this, "Error computing final grades: " + e2.getMessage());
          }
       }
+   }
+
+   private void openChangePassword() {
+      new ChangePasswordFrame(this.currentUser);
    }
 }
 

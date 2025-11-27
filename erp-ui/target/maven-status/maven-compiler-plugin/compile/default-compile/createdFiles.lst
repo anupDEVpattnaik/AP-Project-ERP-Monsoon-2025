@@ -1,5 +1,7 @@
-ui\AdminDashboard.class
+ui\ChangePasswordFrame.class
 ui\LoginFrame$1.class
-ui\StudentDashboard.class
 ui\LoginFrame.class
+ui\AdminDashboard.class
+ui\StudentDashboard.class
+ui\ChangePasswordFrame$1.class
 ui\InstructorDashboard.class

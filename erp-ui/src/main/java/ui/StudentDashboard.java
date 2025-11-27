@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -15,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import model.AuthUser;
 import model.Course;
@@ -52,7 +52,12 @@ public class StudentDashboard extends JFrame {
       var3.addActionListener((var1x) -> {
          this.logout();
       });
+      JButton changePasswordBtn = new JButton("Change Password");
+      changePasswordBtn.addActionListener((var1x) -> {
+         this.openChangePassword();
+      });
       var2.add(var3);
+      var2.add(changePasswordBtn);
       var1.add(var2, "North");
       JTabbedPane var4 = new JTabbedPane();
       JPanel var5 = new JPanel(new BorderLayout());
@@ -70,15 +75,10 @@ public class StudentDashboard extends JFrame {
       var9.addActionListener((var1x) -> {
          this.openRegisterDialog();
       });
-      JButton var18 = new JButton("Drop Section");
-      var18.addActionListener((var1x) -> {
-         this.openDropDialog();
-      });
       var8.add(var9, "North");
-      var8.add(var18, "Center");
-      var4.addTab("Register/Drop", var8);
+      var4.addTab("Register", var8);
       JPanel var10 = new JPanel(new BorderLayout());
-      JButton var11 = new JButton("View My Timetable");
+      JButton var11 = new JButton("View Timetable");
       JTextArea var12 = new JTextArea();
       var12.setEditable(false);
       var11.addActionListener((var2x) -> {
@@ -86,9 +86,9 @@ public class StudentDashboard extends JFrame {
       });
       var10.add(var11, "North");
       var10.add(new JScrollPane(var12), "Center");
-      var4.addTab("My Timetable", var10);
+      var4.addTab("Timetable", var10);
       JPanel var13 = new JPanel(new BorderLayout());
-      JButton var14 = new JButton("View My Grades");
+      JButton var14 = new JButton("View Grades");
       JTextArea var15 = new JTextArea();
       var15.setEditable(false);
       var14.addActionListener((var2x) -> {
@@ -96,7 +96,7 @@ public class StudentDashboard extends JFrame {
       });
       var13.add(var14, "North");
       var13.add(new JScrollPane(var15), "Center");
-      var4.addTab("My Grades", var13);
+      var4.addTab("Grades", var13);
       JPanel var16 = new JPanel(new BorderLayout());
       JButton var17 = new JButton("Export Transcript");
       var17.addActionListener((var1x) -> {
@@ -112,78 +112,68 @@ public class StudentDashboard extends JFrame {
       this.dispose();
    }
 
+   private void openChangePassword() {
+      new ChangePasswordFrame(this.currentUser);
+   }
+
    private void viewCourseCatalog(JTextArea var1) {
       try {
-         List var2 = this.studentService.getAllCourses();
+         List<Course> var2 = this.studentService.getAllCourses();
          StringBuilder var3 = new StringBuilder();
-         Iterator var4 = var2.iterator();
-
-         while(var4.hasNext()) {
-            Course var5 = (Course)var4.next();
-            var3.append("Code: ").append(var5.getCode()).append(", Title: ").append(var5.getTitle()).append(", Credits: ").append(var5.getCredits()).append("\n");
+         for (Course var4 : var2) {
+            var3.append("Code: ").append(var4.getCode()).append(", Title: ").append(var4.getTitle()).append(", Credits: ").append(var4.getCredits()).append("\n");
          }
-
          var1.setText(var3.toString());
-      } catch (SQLException var6) {
-         JOptionPane.showMessageDialog(this, "Error viewing course catalog: " + var6.getMessage());
+      } catch (SQLException var5) {
+         JOptionPane.showMessageDialog(this, "Error viewing course catalog: " + var5.getMessage());
       }
-
    }
 
    private void openRegisterDialog() {
-      String var1 = JOptionPane.showInputDialog(this, "Enter Section ID to register:");
-      if (var1 != null) {
+      JTextField var1 = new JTextField();
+      Object[] var2 = new Object[]{"Section ID:", var1};
+      int var3 = JOptionPane.showConfirmDialog(this, var2, "Register for Section", 2);
+      if (var3 == 0) {
          try {
-            int var2 = Integer.parseInt(var1);
-            boolean var3 = this.studentService.registerForSection(this.currentUser.getUserId(), var2, this.currentUser);
-            if (var3) {
+            int var4 = Integer.parseInt(var1.getText());
+            boolean var5 = this.studentService.registerForSection(this.currentUser.getUserId(), var4, this.currentUser);
+            if (var5) {
                JOptionPane.showMessageDialog(this, "Registered successfully!");
             } else {
                JOptionPane.showMessageDialog(this, "Registration failed.");
             }
-         } catch (NumberFormatException var4) {
+         } catch (NumberFormatException var6) {
             JOptionPane.showMessageDialog(this, "Invalid section ID.");
-         } catch (SQLException var5) {
-            JOptionPane.showMessageDialog(this, "Error registering: " + var5.getMessage());
+         } catch (SQLException var7) {
+            JOptionPane.showMessageDialog(this, "Error registering: " + var7.getMessage());
          }
       }
-
    }
 
    private void viewTimetable(JTextArea var1) {
       try {
-         List var2 = this.studentService.getStudentTimetable(this.currentUser.getUserId(), this.currentUser);
+         List<Section> var2 = this.studentService.getStudentTimetable(this.currentUser.getUserId(), this.currentUser);
          StringBuilder var3 = new StringBuilder();
-         Iterator var4 = var2.iterator();
-
-         while(var4.hasNext()) {
-            Section var5 = (Section)var4.next();
-            var3.append("Course: ").append(var5.getcourse_id()).append(", Time: ").append(var5.getday_time()).append(", Room: ").append(var5.getroom()).append("\n");
+         for (Section var4 : var2) {
+            var3.append("Section ID: ").append(var4.getsection_id()).append(", Course: ").append(var4.getcourse_id()).append(", Room: ").append(var4.getroom()).append(", Time: ").append(var4.getday_time()).append("\n");
          }
-
          var1.setText(var3.toString());
-      } catch (SQLException var6) {
-         JOptionPane.showMessageDialog(this, "Error viewing timetable: " + var6.getMessage());
+      } catch (SQLException var5) {
+         JOptionPane.showMessageDialog(this, "Error viewing timetable: " + var5.getMessage());
       }
-
    }
 
    private void viewGrades(JTextArea var1) {
       try {
-         List var2 = this.studentService.getGrades(this.currentUser.getUserId(), this.currentUser);
+         List<Grade> var2 = this.studentService.getGrades(this.currentUser.getUserId(), this.currentUser);
          StringBuilder var3 = new StringBuilder();
-         Iterator var4 = var2.iterator();
-
-         while(var4.hasNext()) {
-            Grade var5 = (Grade)var4.next();
-            var3.append("Component: ").append(var5.getComponent()).append(", Score: ").append(var5.getScore()).append(", Final: ").append(var5.getFinal_grade()).append("\n");
+         for (Grade var4 : var2) {
+            var3.append("Component: ").append(var4.getComponent()).append(", Score: ").append(var4.getScore()).append(", Final: ").append(var4.getFinal_grade()).append("\n");
          }
-
          var1.setText(var3.toString());
-      } catch (SQLException var6) {
-         JOptionPane.showMessageDialog(this, "Error viewing grades: " + var6.getMessage());
+      } catch (SQLException var5) {
+         JOptionPane.showMessageDialog(this, "Error viewing grades: " + var5.getMessage());
       }
-
    }
 
    private void exportTranscript() {
@@ -193,26 +183,5 @@ public class StudentDashboard extends JFrame {
       } catch (SQLException var2) {
          JOptionPane.showMessageDialog(this, "Error exporting transcript: " + var2.getMessage());
       }
-
-   }
-
-   private void openDropDialog() {
-      String var1 = JOptionPane.showInputDialog(this, "Enter Section ID to drop:");
-      if (var1 != null) {
-         try {
-            int var2 = Integer.parseInt(var1);
-            boolean var3 = this.studentService.dropSection(this.currentUser.getUserId(), var2, this.currentUser);
-            if (var3) {
-               JOptionPane.showMessageDialog(this, "Dropped successfully!");
-            } else {
-               JOptionPane.showMessageDialog(this, "Drop failed.");
-            }
-         } catch (NumberFormatException var4) {
-            JOptionPane.showMessageDialog(this, "Invalid section ID.");
-         } catch (SQLException var5) {
-            JOptionPane.showMessageDialog(this, "Error dropping: " + var5.getMessage());
-         }
-      }
    }
 }
-
