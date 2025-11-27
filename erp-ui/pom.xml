@@ -8,7 +8,7 @@
 
     <!-- This project info -->
     <groupId>com.iiitd.erp</groupId>
-    <artifactId>erp-frontend</artifactId>
+    <artifactId>erp-ui</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <!-- Java version -->
