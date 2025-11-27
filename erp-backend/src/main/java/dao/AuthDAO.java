@@ -17,7 +17,7 @@ public class AuthDAO {
     }
 
     public AuthUser getUserByUsername(String username) throws SQLException {
-        String query = "SELECT user_id, username, role, password_hash, status, last_login FROM users_auth WHERE username = ?";
+        String query = "SELECT user_id, username, role, password_hash, status, last_login, failed_login_attempts FROM users_auth WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
         ResultSet rs = ps.executeQuery();
@@ -34,6 +34,7 @@ public class AuthDAO {
             } else {
                 user.setLastLogin(null);
             }
+            user.setFailedLoginAttempts(rs.getInt("failed_login_attempts"));
 
             return user;
         }
@@ -84,6 +85,38 @@ public class AuthDAO {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, newPasswordHash);
         ps.setInt(2, userId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    }
+
+    public boolean incrementFailedLoginAttempts(int userId) throws SQLException {
+        String query = "UPDATE users_auth SET failed_login_attempts = failed_login_attempts + 1 WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, userId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    }
+
+    public boolean resetFailedLoginAttempts(int userId) throws SQLException {
+        String query = "UPDATE users_auth SET failed_login_attempts = 0 WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, userId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    }
+
+    public boolean lockUser(int userId) throws SQLException {
+        String query = "UPDATE users_auth SET status = 'locked' WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, userId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    }
+
+    public boolean unlockUser(int userId) throws SQLException {
+        String query = "UPDATE users_auth SET status = 'active', failed_login_attempts = 0 WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, userId);
         int rows = ps.executeUpdate();
         return rows > 0;
     }

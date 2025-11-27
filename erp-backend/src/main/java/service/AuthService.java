@@ -21,6 +21,7 @@ public class AuthService {
     /**
      * Attempts to log in the user by verifying username & password.
      * Returns AuthUser if success, null if invalid credentials.
+     * Tracks failed login attempts and locks account after 5 failures.
      */
     public AuthUser login(String username, String plainPassword) throws SQLException {
 
@@ -30,14 +31,29 @@ public class AuthService {
             return null; // user not found
         }
 
+        // Check if account is locked
+        if ("locked".equals(user.getStatus())) {
+            return null; // account locked
+        }
+
         // Verify password using BCrypt
         boolean match = BCrypt.checkpw(plainPassword, user.getPasswordHash());
 
         if (!match) {
+            // Increment failed login attempts
+            authDAO.incrementFailedLoginAttempts(user.getUserId());
+
+            // Check if we need to lock the account
+            AuthUser updatedUser = authDAO.getUserByUsername(username);
+            if (updatedUser != null && updatedUser.getFailedLoginAttempts() >= 5) {
+                authDAO.lockUser(user.getUserId());
+            }
+
             return null; // wrong password
         }
 
-        // Update last login timestamp
+        // Successful login - reset failed attempts and update last login
+        authDAO.resetFailedLoginAttempts(user.getUserId());
         authDAO.updateLastLogin(user.getUserId());
 
         return user;

@@ -141,4 +141,11 @@ public class AdminService {
     public void disableMaintenance() throws SQLException {
         settingsService.disableMaintenance();
     }
+
+    /**
+     * Unlock a user account (admin override).
+     */
+    public boolean unlockUser(int userId) throws SQLException {
+        return authDAO.unlockUser(userId);
+    }
 }

@@ -9,6 +9,7 @@ public class AuthUser {
     private String passwordHash;
     private String status;
     private LocalDateTime lastLogin;
+    private int failedLoginAttempts;
 
     public AuthUser() {}
 
@@ -29,6 +30,9 @@ public class AuthUser {
 
     public LocalDateTime getLastLogin() { return lastLogin; }
     public void setLastLogin(LocalDateTime lastLogin) { this.lastLogin = lastLogin; }
+
+    public int getFailedLoginAttempts() { return failedLoginAttempts; }
+    public void setFailedLoginAttempts(int failedLoginAttempts) { this.failedLoginAttempts = failedLoginAttempts; }
 
     @Override
     public String toString() {
