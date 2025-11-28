@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -95,11 +96,24 @@ public class StudentDashboard extends JFrame {
       var5.add(new JScrollPane(var7), "Center");
       var4.addTab("Course Catalog", var5);
       JPanel var8 = new JPanel(new BorderLayout());
+      JPanel registerPanel = new JPanel(new FlowLayout());
       JButton var9 = new JButton("Register for Section");
       var9.addActionListener((var1x) -> {
          this.openRegisterDialog();
       });
-      var8.add(var9, "North");
+      registerPanel.add(var9);
+
+      // Add drop section combo box and button
+      JComboBox<Section> dropComboBox = new JComboBox<>();
+      this.populateDropComboBox(dropComboBox);
+      JButton dropButton = new JButton("Drop Section");
+      dropButton.addActionListener((var1x) -> {
+         this.dropSelectedSection(dropComboBox);
+      });
+      registerPanel.add(dropComboBox);
+      registerPanel.add(dropButton);
+
+      var8.add(registerPanel, "North");
       var4.addTab("Register", var8);
       JPanel var10 = new JPanel(new BorderLayout());
       JButton var11 = new JButton("View Timetable");
@@ -206,6 +220,41 @@ public class StudentDashboard extends JFrame {
          JOptionPane.showMessageDialog(this, "Transcript CSV:\n" + var1);
       } catch (SQLException var2) {
          JOptionPane.showMessageDialog(this, "Error exporting transcript: " + var2.getMessage());
+      }
+   }
+
+   private void populateDropComboBox(JComboBox<Section> comboBox) {
+      try {
+         List<Section> enrolledSections = this.studentService.getStudentTimetable(this.currentUser.getUserId(), this.currentUser);
+         comboBox.removeAllItems();
+         for (Section section : enrolledSections) {
+            comboBox.addItem(section);
+         }
+      } catch (SQLException e) {
+         JOptionPane.showMessageDialog(this, "Error loading enrolled sections: " + e.getMessage());
+      }
+   }
+
+   private void dropSelectedSection(JComboBox<Section> comboBox) {
+      Section selectedSection = (Section) comboBox.getSelectedItem();
+      if (selectedSection == null) {
+         JOptionPane.showMessageDialog(this, "No section selected.");
+         return;
+      }
+
+      int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to drop Section " + selectedSection.getsection_id() + " - " + selectedSection.getcourse_id() + "?", "Confirm Drop", JOptionPane.YES_NO_OPTION);
+      if (confirm == JOptionPane.YES_OPTION) {
+         try {
+            boolean success = this.studentService.dropSection(this.currentUser.getUserId(), selectedSection.getsection_id(), this.currentUser);
+            if (success) {
+               JOptionPane.showMessageDialog(this, "Section dropped successfully!");
+               this.populateDropComboBox(comboBox); // Refresh the combo box
+            } else {
+               JOptionPane.showMessageDialog(this, "Failed to drop section.");
+            }
+         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error dropping section: " + e.getMessage());
+         }
       }
    }
 }

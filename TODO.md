@@ -1,0 +1,5 @@
+- [x] Add import for JComboBox in StudentDashboard.java
+- [x] Modify the Register tab to include a JComboBox populated with enrolled sections
+- [x] Add a "Drop Section" button with action listener to handle dropping
+- [x] Implement confirmation dialog before dropping
+- [x] Handle success/failure messages and refresh combo box after drop
