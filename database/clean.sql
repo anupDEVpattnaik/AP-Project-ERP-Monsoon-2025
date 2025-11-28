@@ -1,0 +1,2 @@
+DROP DATABASE erp_db;
+DROP DATABASE auth_db;

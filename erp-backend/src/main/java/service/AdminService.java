@@ -96,12 +96,12 @@ public class AdminService {
 
     /**
      * Create a new course in ERP DB.
-     * courseId (String) is the unique course identifier (e.g., "CS101").
+     * code (String) is the unique course identifier (e.g., "CSE101").
      */
-    public boolean createCourse(String courseId, String courseName, int credits) throws SQLException {
+    public boolean createCourse(String code, String title, int credits) throws SQLException {
         Course c = new Course();
-        c.setCode(courseId);
-        c.setTitle(courseName);
+        c.setCode(code);
+        c.setTitle(title);
         c.setCredits(credits);
 
         return courseDAO.addCourse(c);
@@ -111,7 +111,7 @@ public class AdminService {
      * Create a new section for a course.
      * instructorUserId should be the ERP instructor user_id (same as auth user_id).
      */
-    public boolean createSection(String courseId,
+    public boolean createSection(String code,
                                  int instructorUserId,
                                  String dayTime,
                                  String room,
@@ -119,7 +119,7 @@ public class AdminService {
                                  String semester,
                                  int year) throws SQLException {
         Section s = new Section();
-        s.setcourse_id(courseId);
+        s.setcourse_id(code);
         s.setInstructor_id(instructorUserId);
         s.setday_time(dayTime);
         s.setroom(room);

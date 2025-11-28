@@ -15,7 +15,7 @@ import service.InstructorService;
 import service.SettingsService;
 import service.StudentService;
 
-public class TestApp {
+public class TestAppNoJUnit {
 
     private static AuthService authService;
     private static AdminService adminService;
@@ -191,7 +191,7 @@ public class TestApp {
 
     private static void adminCreateSection() throws SQLException {
         System.out.print("course code: ");
-        String courseId = sc.nextLine().trim();
+        String code = sc.nextLine().trim();
         System.out.print("instructor auth user_id: ");
         int iid = Integer.parseInt(sc.nextLine().trim());
         System.out.print("day_time: ");
@@ -204,7 +204,7 @@ public class TestApp {
         String sem = sc.nextLine().trim();
         System.out.print("year: ");
         int yr = Integer.parseInt(sc.nextLine().trim());
-        boolean ok = adminService.createSection(courseId, iid, dt, room, cap, sem, yr);
+        boolean ok = adminService.createSection(code, iid, dt, room, cap, sem, yr);
         System.out.println("Section created: " + ok);
     }
 
@@ -418,9 +418,9 @@ public class TestApp {
         System.out.println("\n*** Running scripted full flow demo (no prompts) ***");
         try {
             // ask for admin creds to run demo as admin (or try default admin1/admin123)
-            System.out.print("Enter admin username (or press enter for 'admin1'): ");
+            System.out.print("Enter admin username (or press enter for 'admin'): ");
             String adminUser = sc.nextLine().trim();
-            if (adminUser.isEmpty()) adminUser = "admin1";
+            if (adminUser.isEmpty()) adminUser = "admin";
             System.out.print("Enter admin password (or press enter for 'admin123'): ");
             String adminPass = sc.nextLine();
             if (adminPass.isEmpty()) adminPass = "admin123";
@@ -438,13 +438,13 @@ public class TestApp {
             System.out.println("Created demo_student id=" + stuAuth.getUserId() + ", demo_instructor id=" + instAuth.getUserId());
 
             // create ERP profiles
-            adminService.createStudentProfile(stuAuth.getUserId(), "2025D001", "CSE", 1);
+            adminService.createStudentProfile(stuAuth.getUserId(), "2025001", "B.Tech", 1);
             adminService.createInstructorProfile(instAuth.getUserId(), "CSE");
             System.out.println("ERP profiles created.");
 
             // create course + section
-            adminService.createCourse("DEMO101", "Demo Course", 3);
-            boolean secOk = adminService.createSection("DEMO101",
+            adminService.createCourse("DEM101", "Demo Course", 3);
+            boolean secOk = adminService.createSection("DEM101",
                     instAuth.getUserId(),
                     "Fri 9AM",
                     "DemoRoom",
