@@ -35,9 +35,6 @@ public class StudentService {
     }
 
 
-    // -------------------------------------------------------
-    // 1. VIEW COURSE CATALOG
-    // -------------------------------------------------------
     public List<Course> getAllCourses() throws SQLException {
         return courseDAO.getAllCourses();
     }
@@ -55,9 +52,6 @@ public class StudentService {
     }
 
 
-    // -------------------------------------------------------
-    // 2. REGISTER FOR A SECTION
-    // -------------------------------------------------------
     public boolean registerForSection(int studentUserId, int sectionId, AuthUser sessionUser) throws SQLException {
 
         // Role + ownership check
@@ -87,10 +81,6 @@ public class StudentService {
         return enrollmentDAO.addEnrollment(studentUserId, sectionId);
     }
 
-
-    // -------------------------------------------------------
-    // 3. DROP A SECTION
-    // -------------------------------------------------------
     public boolean dropSection(int studentUserId, int sectionId, AuthUser sessionUser) throws SQLException {
 
         accessService.requireStudentSelfAccess(studentUserId, sessionUser);
@@ -104,9 +94,6 @@ public class StudentService {
     }
 
 
-    // -------------------------------------------------------
-    // 4. VIEW TIMETABLE
-    // -------------------------------------------------------
     public List<Section> getStudentTimetable(int studentUserId, AuthUser sessionUser) throws SQLException {
 
         accessService.requireStudentSelfAccess(studentUserId, sessionUser);
@@ -123,9 +110,7 @@ public class StudentService {
     }
 
 
-    // -------------------------------------------------------
-    // 5. VIEW GRADES
-    // -------------------------------------------------------
+
     public List<Grade> getGrades(int studentUserId, AuthUser sessionUser) throws SQLException {
 
         accessService.requireStudentSelfAccess(studentUserId, sessionUser);
@@ -134,9 +119,6 @@ public class StudentService {
     }
 
 
-    // -------------------------------------------------------
-    // 6. EXPORT TRANSCRIPT (Stub)
-    // -------------------------------------------------------
     public String exportTranscriptCSV(int studentUserId, AuthUser sessionUser) throws SQLException {
 
         accessService.requireStudentSelfAccess(studentUserId, sessionUser);

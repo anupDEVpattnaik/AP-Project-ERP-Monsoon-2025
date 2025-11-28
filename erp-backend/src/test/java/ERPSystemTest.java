@@ -23,59 +23,56 @@ import service.StudentService;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ERPSystemTest {
 
-    // Static Initialization of Services (for the whole test class)
+ 
     private static AuthService authService;
     private static AdminService adminService;
     private static StudentService studentService;
     private static InstructorService instructorService;
     private static SectionDAO sectionDAO; 
     
-    // Test Data Identifiers
+
     private static final String STUDENT_USERNAME = "junit_student";
     private static final String INSTRUCTOR_USERNAME = "junit_instructor";
     private static final String COURSE_CODE = "JUT101";
 
-    // IDs populated during the test flow
     private static AuthUser adminUser;
     private static AuthUser demoStudentAuth;
     private static AuthUser demoInstructorAuth;
     private static int demoSectionId;
 
-    // --- SETUP and TEARDOWN ---
+
 
     @BeforeAll
     static void setup() throws SQLException {
-        // 1. Initialize all services
+        
         authService = new AuthService();
         adminService = new AdminService();
         studentService = new StudentService();
         instructorService = new InstructorService();
         sectionDAO = new SectionDAO();
         
-        // 2. Log in the administrator needed for test setup
+     
         adminUser = authService.login("admin", "admin123"); 
         
-        // CRITICAL ASSERTION: The test cannot proceed without admin access
+        
         Assertions.assertNotNull(adminUser, "FATAL: Admin user login failed. Check DB connection/credentials.");
         System.out.println("Setup complete. Admin logged in: " + adminUser.getUsername());
     }
     
-    // -------------------------------------------------------------------------
-    // --- TEST A: DATA CREATION (Admin Flow) ---
-    // -------------------------------------------------------------------------
+
     @Test
     @Order(1) 
     void test_A_DataCreation() throws SQLException {
         System.out.println("\n--- Test A: Data Creation (Admin Flow) ---");
         
-        // 1. Create Auth Users
+        
         demoStudentAuth = adminService.createAuthUser(STUDENT_USERNAME, "student", "jstud123", "active");
         demoInstructorAuth = adminService.createAuthUser(INSTRUCTOR_USERNAME, "instructor", "jinst123", "active");
         
         Assertions.assertNotNull(demoStudentAuth, "1. Student Auth User creation failed.");
         Assertions.assertNotNull(demoInstructorAuth, "2. Instructor Auth User creation failed.");
         
-        // 2. Create ERP Profiles
+      
         Assertions.assertTrue(
             adminService.createStudentProfile(demoStudentAuth.getUserId(), "JUNIT001", "B.Tech", 1), 
             "3. Student ERP profile creation failed."
@@ -85,7 +82,7 @@ public class ERPSystemTest {
             "4. Instructor ERP profile creation failed."
         );
 
-        // 3. Create Course + Section
+    
         Assertions.assertTrue(
             adminService.createCourse(COURSE_CODE, "JUnit Testing Course", 3), 
             "5. Course creation failed."
@@ -94,16 +91,13 @@ public class ERPSystemTest {
             "Mon 10AM", "T101", 5, "Spring", 2026);
         Assertions.assertTrue(sectionCreated, "6. Section creation failed.");
 
-        // 4. Retrieve Section ID for subsequent tests
         List<Section> secList = sectionDAO.getSectionsByInstructor(demoInstructorAuth.getUserId());
         Assertions.assertFalse(secList.isEmpty(), "7. Created section not found in DAO.");
         demoSectionId = secList.get(0).getsection_id();
         System.out.println("Test A success. Created Section ID: " + demoSectionId);
     }
 
-    // -------------------------------------------------------------------------
-    // --- TEST B: ENROLLMENT AND GRADING FLOW (Student/Instructor) ---
-    // -------------------------------------------------------------------------
+
     @Test
     @Order(2) 
     void test_B_EnrollmentAndGradingFlow() throws SQLException {
@@ -150,10 +144,7 @@ public class ERPSystemTest {
         Assertions.assertEquals("A-", computedFinalGrade, "7. Computed letter grade is incorrect (Expected A-).");
         System.out.println("Test B success. Enrollment and Grading verified.");
     }
-    
-    // -------------------------------------------------------------------------
-    // --- TEST C: BOUNDARY CONDITIONS (Drop/Duplicate) ---
-    // -------------------------------------------------------------------------
+
     @Test
     @Order(3) 
     void test_C_BoundaryConditions() throws SQLException {
@@ -184,9 +175,7 @@ public class ERPSystemTest {
     }
 
 
-    // -------------------------------------------------------------------------
-    // --- CLEANUP ---
-    // -------------------------------------------------------------------------
+  
     @AfterAll
     static void cleanup() {
         System.out.println("\n--- Cleanup Step: Deleting all test data ---");
@@ -195,17 +184,7 @@ public class ERPSystemTest {
         Assumptions.assumeTrue(demoStudentAuth != null && demoInstructorAuth != null && demoSectionId != 0);
         
         try {
-            // Deletion order is critical due to foreign key constraints:
-            // 1. Delete Student grades (if any remained) and Enrollment
-            // 2. Delete Section
-            // 3. Delete Course
-            // 4. Delete ERP Profiles (Student/Instructor)
-            // 5. Delete Auth Users
-
-            // We rely on service methods that internally call DAO delete methods (e.g., AdminService)
-            
-            // 1 & 2: Delete Section, which should cascade or require deleting grades/enrollments first.
-            // Assuming AdminService has a deleteSection method that handles grades/enrollments:
+     
             adminService.deleteSection(demoSectionId);
             System.out.println("Section " + demoSectionId + " deleted.");
 

@@ -30,21 +30,16 @@ public class InstructorService {
     }
 
 
-    // -------------------------------------------------------
-    // 1. GET SECTIONS TAUGHT BY INSTRUCTOR
-    // -------------------------------------------------------
     public List<Section> getMySections(int instructorUserId, AuthUser sessionUser) throws SQLException {
         accessService.requireInstructorSectionAccess(instructorUserId, sessionUser);
         return sectionDAO.getSectionsByInstructor(instructorUserId);
     }
 
 
-    // -------------------------------------------------------
-    // 2. GET STUDENTS ENROLLED IN A SECTION
-    // -------------------------------------------------------
+
     public List<Enrollment> getEnrolledStudents(int sectionId, AuthUser sessionUser) throws SQLException {
 
-        // Verify instructor owns this section
+
         Section sec = sectionDAO.getSectionById(sectionId);
         if (sec == null) throw new SQLException("Invalid section ID.");
 
@@ -54,9 +49,7 @@ public class InstructorService {
     }
 
 
-    // -------------------------------------------------------
-    // 3. ENTER COMPONENT GRADE
-    // -------------------------------------------------------
+
     public boolean enterComponentGrade(int sectionId, int studentId,
                                        String component, float score, String final_grade,
                                        AuthUser sessionUser) throws SQLException {
@@ -83,9 +76,7 @@ public class InstructorService {
     }
 
 
-    // -------------------------------------------------------
-    // 4. COMPUTE FINAL GRADE
-    // -------------------------------------------------------
+  
     public boolean computeFinalGrade(int sectionId, int studentId, AuthUser sessionUser) throws SQLException {
 
         // Check instructor section ownership
@@ -121,9 +112,7 @@ public class InstructorService {
     }
 
 
-    // -------------------------------------------------------
-    // 5. EXPORT GRADEBOOK (STUB)
-    // -------------------------------------------------------
+
     public String exportSectionGradebookCSV(int sectionId, AuthUser sessionUser) throws SQLException {
 
         // Ownership check
@@ -152,9 +141,6 @@ public class InstructorService {
     }
 
 
-    // -------------------------------------------------------
-    // HELPER — NUMERIC → LETTER
-    // -------------------------------------------------------
     private String convertToLetterGrade(double score) {
         if (score >= 90) return "A";
         if (score >= 80) return "A-";
