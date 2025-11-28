@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,6 +21,7 @@ import model.AuthUser;
 import model.Course;
 import model.Grade;
 import model.Section;
+import service.SettingsService;
 import service.StudentService;
 
 public class StudentDashboard extends JFrame {
@@ -47,6 +49,26 @@ public class StudentDashboard extends JFrame {
    private void initUI() {
       Container var1 = this.getContentPane();
       var1.setLayout(new BorderLayout());
+
+      // Create top panel for banner and buttons
+      JPanel topPanel = new JPanel();
+      topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.Y_AXIS));
+
+      // Check for maintenance mode and add banner if on
+      try {
+         SettingsService settingsService = new SettingsService();
+         if (settingsService.isMaintenanceOn()) {
+            JPanel bannerPanel = new JPanel();
+            bannerPanel.setBackground(java.awt.Color.RED);
+            JLabel bannerLabel = new JLabel("System is under maintenance. Some features may be unavailable.");
+            bannerLabel.setForeground(java.awt.Color.WHITE);
+            bannerPanel.add(bannerLabel);
+            topPanel.add(bannerPanel);
+         }
+      } catch (SQLException e) {
+         // If error checking maintenance, just continue without banner
+      }
+
       JPanel var2 = new JPanel(new FlowLayout(2));
       JButton var3 = new JButton("Logout");
       var3.addActionListener((var1x) -> {
@@ -58,7 +80,9 @@ public class StudentDashboard extends JFrame {
       });
       var2.add(var3);
       var2.add(changePasswordBtn);
-      var1.add(var2, "North");
+      topPanel.add(var2);
+
+      var1.add(topPanel, "North");
       JTabbedPane var4 = new JTabbedPane();
       JPanel var5 = new JPanel(new BorderLayout());
       JButton var6 = new JButton("View Course Catalog");
