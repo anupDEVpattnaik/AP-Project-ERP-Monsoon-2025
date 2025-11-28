@@ -68,7 +68,8 @@ public class GradesDAO {
         PreparedStatement ps = conn.prepareStatement(query);
 
         ps.setDouble(1, newScore);
-        ps.setInt(2, gradeId);
+        ps.setString(2, final_grade);
+        ps.setInt(3, gradeId);
 
         ps.executeUpdate();
         return true;

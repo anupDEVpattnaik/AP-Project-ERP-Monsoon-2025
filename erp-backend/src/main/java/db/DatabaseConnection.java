@@ -1,22 +1,48 @@
 package db;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConnection {
-    private static final String USER = "root";
-    private static final String PASS = "sqlisshit";
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
-    // Connection to ERP database
-    public static Connection getERPConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/erp_db";
-        return DriverManager.getConnection(url, USER, PASS);
+public class DatabaseConnection {
+
+    private static final HikariDataSource erpDataSource;
+    private static final HikariDataSource authDataSource;
+
+    private static final String USER = "root";
+    private static final String PASS = "sqlisshit"; 
+
+    static {
+        // --- ERP Database Configuration ---
+        HikariConfig erpConfig = new HikariConfig();
+        erpConfig.setJdbcUrl("jdbc:mysql://localhost:3306/erp_db");
+        erpConfig.setUsername(USER);
+        erpConfig.setPassword(PASS);
+        erpConfig.addDataSourceProperty("cachePrepStmts", "true");
+        erpConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+        erpConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        erpConfig.setMaximumPoolSize(15); 
+        erpDataSource = new HikariDataSource(erpConfig);
+
+        // --- AUTH Database Configuration ---
+        HikariConfig authConfig = new HikariConfig();
+        authConfig.setJdbcUrl("jdbc:mysql://localhost:3306/auth_db");
+        authConfig.setUsername(USER);
+        authConfig.setPassword(PASS);
+        authConfig.addDataSourceProperty("cachePrepStmts", "true");
+        authConfig.setMaximumPoolSize(5);
+        authDataSource = new HikariDataSource(authConfig);
     }
 
-    // Connection to AUTH database
+    // Public method to get a connection for the ERP database
+    public static Connection getERPConnection() throws SQLException {
+        return erpDataSource.getConnection();
+    }
+
+    // Public method to get a connection for the AUTH database
     public static Connection getAuthConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/auth_db";
-        return DriverManager.getConnection(url, USER, PASS);
+        return authDataSource.getConnection();
     }
 }

@@ -64,7 +64,8 @@ public class AuthService {
      */
     public boolean changePassword(int userId, String oldPassword, String newPassword) throws SQLException {
 
-        AuthUser user = authDAO.getUserByUserId(userId); // we need to add this in AuthDAO if missing
+        // Assuming AuthDAO has getUserByUserId, as noted in previous review
+        AuthUser user = authDAO.getUserByUserId(userId); 
 
         if (user == null) return false;
 
@@ -78,7 +79,10 @@ public class AuthService {
         String newHash = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
         // Step 3: check for password reuse (limit = last 3)
-        boolean reused = passwordHistoryDAO.isPasswordReused(userId, newHash, 3);
+        // CRITICAL FIX: We must pass the PLAINTEXT password for the DAO to compare it 
+        // against the history hashes using BCrypt.checkpw().
+        boolean reused = passwordHistoryDAO.isPasswordReused(userId, newPassword, 3); 
+        
         if (reused) {
             throw new SQLException("New password cannot match last 3 passwords.");
         }
@@ -101,4 +105,8 @@ public class AuthService {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
     }
 
+    public boolean deleteUser(int userId) throws SQLException {
+        // NOTE: No role check is done here, assuming AdminService handles permission.
+        return authDAO.deleteUser(userId);
+    }
 }

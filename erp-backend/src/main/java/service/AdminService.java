@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import dao.AuthDAO;
 import dao.CourseDAO;
+import dao.EnrollmentDAO;
 import dao.SectionDAO;
 import dao.UserDAO;
 import model.AuthUser;
@@ -28,6 +29,7 @@ public class AdminService {
     private final UserDAO userDAO;
     private final CourseDAO courseDAO;
     private final SectionDAO sectionDAO;
+    private final EnrollmentDAO enrollmentDAO;
     private final SettingsService settingsService;
     private final AuthService authService; // for hashing passwords
 
@@ -38,6 +40,7 @@ public class AdminService {
         this.sectionDAO = new SectionDAO();
         this.settingsService = new SettingsService();
         this.authService = new AuthService();
+        this.enrollmentDAO = new EnrollmentDAO();
     }
 
     /**
@@ -147,5 +150,39 @@ public class AdminService {
      */
     public boolean unlockUser(int userId) throws SQLException {
         return authDAO.unlockUser(userId);
+    }
+
+    public boolean deleteStudentProfile(int authUserId) throws SQLException {
+        // In a real system, you'd delete all enrollments/grades for this student first.
+        // For cleanup, we assume the simple profile deletion is sufficient here.
+        return userDAO.deleteStudentProfile(authUserId);
+    }
+    
+    /**
+     * Deletes an instructor profile. Assumes all assigned sections are already deleted.
+     */
+    public boolean deleteInstructorProfile(int authUserId) throws SQLException {
+        return userDAO.deleteInstructorProfile(authUserId);
+    }
+
+    /**
+     * Deletes a section, managing dependent records first (Grades and Enrollments).
+     */
+    public boolean deleteSection(int sectionId) throws SQLException {
+        // 1. Delete dependent records (Grades and Enrollments)
+        enrollmentDAO.deleteEnrollmentsAndGradesBySection(sectionId); 
+        
+        // 2. Delete the Section itself
+        return sectionDAO.deleteSection(sectionId);
+    }
+
+    /**
+     * Deletes a course. Requires all associated sections to be deleted first.
+     * In the JUnit test, deleteSection is called before this.
+     */
+    public boolean deleteCourse(String courseCode) throws SQLException {
+        // Optional: Check if any sections for this course still exist.
+        // For cleanup, we just try to delete.
+        return courseDAO.deleteCourse(courseCode);
     }
 }

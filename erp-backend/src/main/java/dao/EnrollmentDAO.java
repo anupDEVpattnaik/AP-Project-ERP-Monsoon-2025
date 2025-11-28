@@ -130,4 +130,20 @@ public class EnrollmentDAO {
         }
         return -1;
     }
+
+    public boolean deleteEnrollmentsAndGradesBySection(int sectionId) throws SQLException {
+        // 1. Delete Grades for all enrollments in this section
+        String deleteGradesSql = 
+            "DELETE FROM grades WHERE enrollment_id IN (SELECT enrollment_id FROM enrollments WHERE section_id = ?)";
+        PreparedStatement ps = conn.prepareStatement(deleteGradesSql);
+        ps.setInt(1, sectionId);
+        ps.executeUpdate();
+
+        // 2. Delete Enrollments for this section
+        String deleteEnrollmentsSql = "DELETE FROM enrollments WHERE section_id = ?";
+        ps = conn.prepareStatement(deleteEnrollmentsSql);
+        ps.setInt(1, sectionId);
+        ps.executeUpdate();
+        return true; // Operation completed
+    }
 }

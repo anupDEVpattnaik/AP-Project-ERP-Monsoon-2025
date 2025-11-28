@@ -120,4 +120,21 @@ public class AuthDAO {
         int rows = ps.executeUpdate();
         return rows > 0;
     }
+
+    public boolean deleteUser(int userId) throws SQLException {
+        // Delete dependent records first (Password History)
+        String deleteHistorySql = "DELETE FROM password_history WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(deleteHistorySql);
+        ps.setInt(1, userId);
+        ps.executeUpdate();
+        // Do not return here, continue to delete the main user record
+
+        
+        // Delete the main user record
+        String deleteUserSql = "DELETE FROM users_auth WHERE user_id = ?";
+        ps = conn.prepareStatement(deleteUserSql);
+        ps.setInt(1, userId);
+        int affectedRows = ps.executeUpdate();
+        return affectedRows > 0;
+    }
 }

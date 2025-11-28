@@ -64,4 +64,20 @@ public class UserDAO {
         int rows = ps.executeUpdate();
         return rows > 0;
     }
+
+    public boolean deleteStudentProfile(int authUserId) throws SQLException {
+        String sql = "DELETE FROM students WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, authUserId);
+        int affectedRows = ps.executeUpdate();
+        return affectedRows > 0;
+    }
+
+    public boolean deleteInstructorProfile(int authUserId) throws SQLException {
+        String sql = "DELETE FROM instructors WHERE user_id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, authUserId);
+        int affectedRows = ps.executeUpdate();
+        return affectedRows > 0;
+    }
 }
