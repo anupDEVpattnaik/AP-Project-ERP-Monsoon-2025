@@ -19,13 +19,7 @@ import service.AuthService;
 import service.InstructorService;
 import service.StudentService;
 
-/**
- * Comprehensive integration test for the entire ERP system flow, 
- * simulating an admin, student, and instructor interaction.
- * The tests are ordered to ensure the correct data setup and flow.
- * * NOTE: All DAO methods used in the Services and this test MUST be 
- * using the 'try-with-resources' pattern to prevent connection leaks.
- */
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ERPSystemTest {
 

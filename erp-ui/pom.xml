@@ -26,6 +26,13 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- FlatLaf for modern UI styling -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.2.5</version>
+        </dependency>
+
         <!-- (optional) You can add frontend-specific dependencies here later -->
 
     </dependencies>

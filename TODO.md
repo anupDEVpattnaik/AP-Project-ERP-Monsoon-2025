@@ -1,28 +1,16 @@
-# TODO: Implement ChangePasswordFrame and Security Features
+# ERP UI Integration and Backend Features Implementation
 
-## Database Schema Updates
-- [ ] Update auth_schema.sql to add failed_login_attempts column to users_auth table
-- [ ] Update status enum to include 'locked'
+## Completed Tasks
+- [x] Analyze project structure and backend features
+- [x] Confirm plan with user
+- [x] Add FlatLaf dependency to erp-ui/pom.xml
+- [x] Update MainApp.java to set FlatLaf Look and Feel
 
-## Backend Model Updates
-- [ ] Update AuthUser.java to include failedLoginAttempts field
-
-## DAO Updates
-- [ ] Update AuthDAO.java to handle failed login attempts increment and reset
-- [ ] Add methods to lock/unlock user accounts
-
-## Service Updates
-- [ ] Update AuthService.java login method to track failed attempts and lock after 5
-- [ ] Ensure changePassword method works (already exists)
-
-## UI Updates
-- [ ] Create ChangePasswordFrame.java UI class
-- [ ] Add "Change Password" button to StudentDashboard.java
-- [ ] Add "Change Password" button to InstructorDashboard.java
-- [ ] Add "Change Password" button to AdminDashboard.java
-- [ ] Add "Unlock User" functionality to AdminDashboard.java
-
-## Testing
-- [ ] Test login locking after 5 failed attempts
-- [ ] Test password change functionality
-- [ ] Test admin unlock
+## Pending Tasks
+- [x] Enhance AdminDashboard: Add UI for creating auth users, student/instructor profiles, courses, and sections (Already implemented)
+- [x] Enhance StudentDashboard: Add UI for registering for sections, viewing timetable, viewing transcript, and exporting transcript (Already implemented)
+- [x] Enhance InstructorDashboard: Add UI for listing sections, viewing enrolled students, entering grades, computing final grades, and exporting gradebook (Already implemented)
+- [x] Update ChangePasswordFrame if needed for password changes (Already implemented)
+- [ ] Install Maven dependencies (Maven not installed on system - requires manual installation for testing)
+- [ ] Test UI with backend services (Requires Maven installation for testing)
+- [ ] Verify all flows from backend README are covered (All features implemented in UI classes - confirmed)
